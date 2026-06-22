@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard AI - Phishing Email Detection</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar glass-panel-dark">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-shield-halved text-gradient"></i>
+                <h2>PhishGuard AI</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="landing"><i class="fa-solid fa-home"></i> Home</li>
+                <li data-target="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</li>
+                <li data-target="detection"><i class="fa-solid fa-magnifying-glass"></i> Detection</li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="btn btn-sm secondary-btn" id="train-model-btn"><i class="fa-solid fa-brain"></i> Retrain Model</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Landing Page -->
+            <section id="landing" class="view active">
+                <div class="hero-container glass-panel">
+                    <h1 class="text-gradient">Welcome to PhishGuard AI</h1>
+                    <p>Advanced machine learning to protect you from phishing attacks and malicious emails.</p>
+                    <div class="features-grid">
+                        <div class="feature-card glass-panel">
+                            <i class="fa-solid fa-brain"></i>
+                            <h3>AI-Powered</h3>
+                            <p>Utilizes multiple ML models for accurate detection.</p>
+                        </div>
+                        <div class="feature-card glass-panel">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <h3>Detailed Analytics</h3>
+                            <p>Visual dashboards and performance metrics.</p>
+                        </div>
+                        <div class="feature-card glass-panel">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <h3>Exportable Reports</h3>
+                            <p>Download PDF reports for your records.</p>
+                        </div>
+                    </div>
+                    <button class="btn primary-btn glow-effect" id="start-btn">Start Analysis <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="view">
+                <h2>Analytics Dashboard</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card glass-panel">
+                        <h3>Total Analyzed</h3>
+                        <p class="stat-value" id="stat-total">0</p>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <h3>Phishing Rate</h3>
+                        <p class="stat-value text-danger" id="stat-phishing-rate">0%</p>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <h3>Safe Rate</h3>
+                        <p class="stat-value text-success" id="stat-safe-rate">0%</p>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <h3>Model Accuracy</h3>
+                        <p class="stat-value text-primary" id="stat-accuracy">0%</p>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-container glass-panel">
+                        <h3>Detection Statistics</h3>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="chart-container glass-panel">
+                        <h3>Confusion Matrix</h3>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="metrics-panel glass-panel mt-4">
+                    <h3>Model Performance Metrics</h3>
+                    <div class="metrics-grid">
+                        <div>
+                            <span>Precision:</span> <strong id="stat-precision">0.00</strong>
+                        </div>
+                        <div>
+                            <span>Recall:</span> <strong id="stat-recall">0.00</strong>
+                        </div>
+                        <div>
+                            <span>F1 Score:</span> <strong id="stat-f1">0.00</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detection Page -->
+            <section id="detection" class="view">
+                <h2>Email Analysis</h2>
+                <div class="detection-container">
+                    <div class="input-panel glass-panel">
+                        <h3>Input Email</h3>
+                        <div class="form-group">
+                            <label for="email-subject">Subject</label>
+                            <input type="text" id="email-subject" placeholder="Enter email subject...">
+                        </div>
+                        <div class="form-group">
+                            <label for="email-body">Email Body</label>
+                            <textarea id="email-body" rows="10" placeholder="Paste full email content here..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn primary-btn" id="analyze-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i> <span id="analyze-btn-text">Analyze Email</span>
+                            </button>
+                            <button class="btn outline-btn" id="clear-btn">Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="result-panel glass-panel hidden" id="result-panel">
+                        <h3>Analysis Result</h3>
+                        <div class="result-header" id="result-header">
+                            <h1 id="prediction-text">SAFE</h1>
+                        </div>
+                        
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span>Risk Level:</span>
+                                <strong id="risk-level">Low</strong>
+                            </div>
+                            <div class="detail-item">
+                                <span>Confidence:</span>
+                                <strong id="confidence-score">0%</strong>
+                            </div>
+                        </div>
+
+                        <div class="explainability-panel">
+                            <h4>Detected Indicators</h4>
+                            <ul id="explainability-list">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+                        
+                        <button class="btn primary-btn full-width mt-4" id="download-report-btn">
+                            <i class="fa-solid fa-download"></i> Download PDF Report
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
